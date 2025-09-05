@@ -12,6 +12,8 @@ import {
 } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
 
+import i from "../assets/n.svg"
+
  const UniversityList = () => {
   const [universities, setUniversities] = React.useState([]);
   const [loading, setLoading] = React.useState(true);
@@ -82,117 +84,132 @@ import { Label } from "@/components/ui/label";
         </div>
 
         {/* Sidebar */}
+       
+
         <aside
-          className={`${
-            showSidebar ? "block" : "hidden"
-          } md:block w-full md:w-64 bg-white p-6 rounded-2xl shadow-md border border-gray-100 h-fit sticky top-6`}
-        >
-          <h3 className="text-lg font-semibold mb-4">Filters</h3>
+  className={`${
+    showSidebar ? "block" : "hidden"
+  } md:block w-full md:w-64 bg-gray-50 dark:bg-gray-900 p-8 rounded-3xl shadow-xl shadow-gray-200/50 dark:shadow-black/30 h-fit sticky top-6 transition-all duration-300 ease-in-out font-sans border border-gray-100 dark:border-gray-800`}
+>
+  <h3 className="text-xl font-bold mb-6 text-gray-800 dark:text-gray-50">Filters</h3>
 
-          <div className="mb-4">
-            <Label>Country</Label>
-            <Input
-              placeholder="e.g. USA"
-              value={filters.country}
-              onChange={(e) =>
-                setFilters({ ...filters, country: e.target.value })
-              }
-            />
-          </div>
+  <div className="mb-6">
+    <Label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Country</Label>
+    <Input
+      placeholder="e.g. USA"
+      value={filters.country}
+      onChange={(e) =>
+        setFilters({ ...filters, country: e.target.value })
+      }
+      className="bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-500 rounded-lg focus:ring-blue-500 focus:border-blue-500 transition-colors"
+    />
+  </div>
 
-          <div className="mb-4">
-            <Label>City</Label>
-            <Input
-              placeholder="e.g. London"
-              value={filters.city}
-              onChange={(e) => setFilters({ ...filters, city: e.target.value })}
-            />
-          </div>
+  <div className="mb-6">
+    <Label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">City</Label>
+    <Input
+      placeholder="e.g. London"
+      value={filters.city}
+      onChange={(e) => setFilters({ ...filters, city: e.target.value })}
+      className="bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-500 rounded-lg focus:ring-blue-500 focus:border-blue-500 transition-colors"
+    />
+  </div>
 
-          <div className="mb-4">
-            <Label>Course/Program</Label>
-            <Input
-              placeholder="e.g. Computer Science"
-              value={filters.course}
-              onChange={(e) =>
-                setFilters({ ...filters, course: e.target.value })
-              }
-            />
-          </div>
+  <div className="mb-6">
+    <Label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Course/Program</Label>
+    <Input
+      placeholder="e.g. Computer Science"
+      value={filters.course}
+      onChange={(e) =>
+        setFilters({ ...filters, course: e.target.value })
+      }
+      className="bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-500 rounded-lg focus:ring-blue-500 focus:border-blue-500 transition-colors"
+    />
+  </div>
 
-          <div className="mb-4">
-            <Label>Degree Level</Label>
-            <Select
-              value={filters.degree || "any"}
-              onValueChange={(value) =>
-                setFilters({ ...filters, degree: value === "any" ? "" : value })
-              }
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Any" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="any">Any</SelectItem>
-                <SelectItem value="bachelor">Bachelor</SelectItem>
-                <SelectItem value="master">Master</SelectItem>
-                <SelectItem value="both">Both</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
+  <div className="mb-6">
+    <Label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Degree Level</Label>
+    <Select
+      value={filters.degree || "any"}
+      onValueChange={(value) =>
+        setFilters({ ...filters, degree: value === "any" ? "" : value })
+      }
+    >
+      <SelectTrigger className="bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-100 rounded-lg focus:ring-blue-500 focus:border-blue-500 transition-colors">
+        <SelectValue placeholder="Any" />
+      </SelectTrigger>
+      <SelectContent className="bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-700">
+        <SelectItem value="any">Any</SelectItem>
+        <SelectItem value="bachelor">Bachelor</SelectItem>
+        <SelectItem value="master">Master</SelectItem>
+        <SelectItem value="both">Both</SelectItem>
+      </SelectContent>
+    </Select>
+  </div>
 
-          <div className="mb-4">
-            <Label>Max Application Fee ($)</Label>
-            <Input
-              type="number"
-              value={filters.maxAppFee}
-              onChange={(e) =>
-                setFilters({ ...filters, maxAppFee: e.target.value })
-              }
-            />
-          </div>
+  <div className="mb-6">
+    <Label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Max Application Fee ($)</Label>
+    <Input
+      type="number"
+      value={filters.maxAppFee}
+      onChange={(e) =>
+        setFilters({ ...filters, maxAppFee: e.target.value })
+      }
+      className="bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-100 rounded-lg focus:ring-blue-500 focus:border-blue-500 transition-colors"
+    />
+  </div>
 
-          <div className="mb-4">
-            <Label>Max Tuition Fee ($)</Label>
-            <Input
-              type="number"
-              value={filters.maxTuition}
-              onChange={(e) =>
-                setFilters({ ...filters, maxTuition: e.target.value })
-              }
-            />
-          </div>
+  <div className="mb-6">
+    <Label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Max Tuition Fee ($)</Label>
+    <Input
+      type="number"
+      value={filters.maxTuition}
+      onChange={(e) =>
+        setFilters({ ...filters, maxTuition: e.target.value })
+      }
+      className="bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-100 rounded-lg focus:ring-blue-500 focus:border-blue-500 transition-colors"
+    />
+  </div>
 
-          <Button
-            variant="outline"
-            className="w-full mt-2"
-            onClick={() =>
-              setFilters({
-                country: "",
-                city: "",
-                course: "",
-                degree: "",
-                maxAppFee: "",
-                maxTuition: "",
-              })
-            }
-          >
-            Reset Filters
-          </Button>
-        </aside>
+  <Button
+    variant="outline"
+    className="w-full mt-4 bg-transparent border-2 border-gray-400 dark:border-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+    onClick={() =>
+      setFilters({
+        country: "",
+        city: "",
+        course: "",
+        degree: "",
+        maxAppFee: "",
+        maxTuition: "",
+      })
+    }
+  >
+    Reset Filters
+  </Button>
+</aside>
 
         {/* Main Content */}
-        <main className="flex-1 px-4 md:px-0">
-          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8">
-            <h2 className="text-2xl font-semibold">Search Universities</h2>
-            <div className="flex items-center gap-3">
-              <Input
-                placeholder="Search by name, country or course..."
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-              />
-              <Button>Search</Button>
-            </div>
-          </div>
+        <main className="flex-1 p-6 md:p-8 font-sans bg-gray-50 dark:bg-gray-950">
+  <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6 mb-12">
+    <h2 className="text-3xl font-extrabold tracking-tight text-gray-900 dark:text-gray-50">
+      Search Universities
+    </h2>
+    <div className="flex items-center gap-3 w-full md:w-auto">
+      <Input
+        placeholder="Search by name, country, or course..."
+        value={query}
+        onChange={(e) => setQuery(e.target.value)}
+        className="flex-1 min-w-0 md:min-w-[300px] rounded-full pl-5 pr-4 py-2 border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-600 shadow-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-300"
+      />
+      <Button
+        className="bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-full px-6 py-2 transition-transform transform hover:scale-105 shadow-md"
+      >
+        Search
+      </Button>
+    </div>
+  </div>
+
 
           {loading ? (
             <p>Loading...</p>
@@ -210,21 +227,21 @@ import { Label } from "@/components/ui/label";
                    </CardHeader>
                    <CardContent className="p-0 text-sm space-y-2 text-gray-600 dark:text-gray-400">
                      <p className="flex items-center gap-2">
-                       <span className="text-gray-400 dark:text-gray-600">📍</span>
+                       <span className="text-gray-400 dark:text-gray-600"><img src="https://img.icons8.com/?size=100&id=34070&format=png&color=000000" width={20}/></span>
                        {uni.city}, {uni.country}
                      </p>
                      <p className="flex items-center gap-2">
-                       <span className="text-gray-400 dark:text-gray-600">🎓</span>
+                       <span className="text-gray-400 dark:text-gray-600"><img src="https://img.icons8.com/?size=100&id=QlB1OMIqTVgl&format=png&color=000000" width={20} /></span>
                        {uni.degree_level}
                      </p>
                      <div className="flex flex-col gap-1 mt-2 border-t pt-2 border-gray-100 dark:border-gray-800">
                        <p className="flex items-center gap-2">
-                         <span className="text-gray-400 dark:text-gray-600">💰</span>
-                         Tuition: **${uni.tuition_fee}**
+                         <span className="text-gray-400 dark:text-gray-600 "><img src="https://img.icons8.com/?size=100&id=cBCf91yx3L2N&format=png&color=000000" width={20} height={20}/></span>
+                         Tuition: <span className="font-bold">${uni.tuition_fee}</span>
                        </p>
                        <p className="flex items-center gap-2">
-                         <span className="text-gray-400 dark:text-gray-600">📝</span>
-                         App Fee: **${uni.application_fee}**
+                         <span className="text-gray-400 dark:text-gray-600"><img src="https://img.icons8.com/?size=100&id=78231&format=png&color=000000 " width={20}/></span>
+                         App Fee: <span className="font-bold">${uni.application_fee}</span>
                        </p>
                      </div>
                      <a

@@ -46,76 +46,96 @@ export default function Register() {
   };
 
   return (
-    <div className="max-w-md mx-auto bg-white p-8 rounded-xl shadow-lg mt-12">
-      <h2 className="text-3xl font-bold mb-6 text-center text-gray-800">Create Account</h2>
-
-      {error && (
-        <p className="text-red-500 text-sm mb-4 text-center font-medium">{error}</p>
-      )}
-
-      <form onSubmit={handleSubmit} className="space-y-6">
-        <div>
-          <Label htmlFor="email">Email</Label>
-          <Input
-            id="email"
-            type="email"
-            name="email"
-            value={formData.email}
-            onChange={handleChange}
-            placeholder="you@example.com"
-            required
-          />
-        </div>
-        <div>
-          <Label htmlFor="username">Username</Label>
-          <Input
-            id="text"
-            type="text"
-            name="username"
-            value={formData.text}
-            onChange={handleChange}
-            placeholder="username"
-            required
-          />
-        </div>
-
-        <div>
-          <Label htmlFor="password">Password</Label>
-          <Input
-            id="password"
-            type="password"
-            name="password"
-            value={formData.password}
-            onChange={handleChange}
-            placeholder="********"
-            required
-          />
-        </div>
-
-        <div>
-          <Label htmlFor="re_password">Confirm Password</Label>
-          <Input
-            id="re_password"
-            type="password"
-            name="re_password"
-            value={formData.re_password}
-            onChange={handleChange}
-            placeholder="********"
-            required
-          />
-        </div>
-
-        <Button type="submit" className="w-full" disabled={loading}>
-          {loading ? "Creating..." : "Register"}
-        </Button>
-      </form>
-
-      <p className="mt-4 text-center text-sm text-gray-600">
-        Already have an account?{" "}
-        <Link to="/login" className="text-blue-600 hover:underline font-medium">
-          Log in
-        </Link>
-      </p>
-    </div>
+    <div className="max-w-md mx-auto bg-white dark:bg-gray-900 p-8 md:p-10 rounded-3xl shadow-xl shadow-gray-200/50 dark:shadow-black/30 mt-12 transition-all duration-300 font-sans">
+    <h2 className="text-4xl font-extrabold mb-6 text-center text-gray-900 dark:text-gray-50 tracking-tight">
+      Create Account
+    </h2>
+  
+    {error && (
+      <div className="bg-red-50 dark:bg-red-950 text-red-700 dark:text-red-300 p-3 rounded-lg mb-4 text-sm text-center font-medium">
+        {error}
+      </div>
+    )}
+  
+    <form onSubmit={handleSubmit} className="space-y-6">
+      <div>
+        <Label htmlFor="email" className="text-sm font-medium text-gray-700 dark:text-gray-300">
+          Email
+        </Label>
+        <Input
+          id="email"
+          type="email"
+          name="email"
+          value={formData.email}
+          onChange={handleChange}
+          placeholder="you@example.com"
+          required
+          className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+        />
+      </div>
+      <div>
+        <Label htmlFor="username" className="text-sm font-medium text-gray-700 dark:text-gray-300">
+          Username
+        </Label>
+        <Input
+          id="username"
+          type="text"
+          name="username"
+          value={formData.username}
+          onChange={handleChange}
+          placeholder="username"
+          required
+          className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+        />
+      </div>
+  
+      <div>
+        <Label htmlFor="password" className="text-sm font-medium text-gray-700 dark:text-gray-300">
+          Password
+        </Label>
+        <Input
+          id="password"
+          type="password"
+          name="password"
+          value={formData.password}
+          onChange={handleChange}
+          placeholder="********"
+          required
+          className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+        />
+      </div>
+  
+      <div>
+        <Label htmlFor="re_password" className="text-sm font-medium text-gray-700 dark:text-gray-300">
+          Confirm Password
+        </Label>
+        <Input
+          id="re_password"
+          type="password"
+          name="re_password"
+          value={formData.re_password}
+          onChange={handleChange}
+          placeholder="********"
+          required
+          className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+        />
+      </div>
+  
+      <Button
+        type="submit"
+        className="w-full bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 text-white font-semibold rounded-lg py-2 shadow-md hover:shadow-lg transition-all duration-200"
+        disabled={loading}
+      >
+        {loading ? "Creating..." : "Register"}
+      </Button>
+    </form>
+  
+    <p className="mt-6 text-center text-sm text-gray-600 dark:text-gray-400">
+      Already have an account?{" "}
+      <Link to="/login" className="text-blue-600 dark:text-blue-400 hover:underline font-medium">
+        Log in
+      </Link>
+    </p>
+  </div>
   );
 }
