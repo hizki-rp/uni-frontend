@@ -199,36 +199,46 @@ import { Label } from "@/components/ui/label";
           ) : filteredUniversities.length > 0 ? (
             <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
               {filteredUniversities.map((uni) => (
-                <Link
-                  key={uni.id}
-                  to={`/university/${uni.id}`}
-                  className="block hover:shadow-lg transition-all duration-300 rounded-2xl"
-                >
-                  <Card className="h-full">
-                    <CardHeader>
-                      <CardTitle>{uni.name}</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <p>
-                        {uni.city}, {uni.country}
-                      </p>
-                      <p>🎓 {uni.degree_level}</p>
-                      <p>
-                        💰 Tuition: ${uni.tuition_fee} | 📝 App Fee: $
-                        {uni.application_fee}
-                      </p>
-                      <a
-                        href={uni.website}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="text-blue-600 hover:underline mt-2 inline-block"
-                        onClick={(e) => e.stopPropagation()} // prevent Link click when visiting external site
-                      >
-                        Visit Website →
-                      </a>
-                    </CardContent>
-                  </Card>
-                </Link>
+                 <Link
+                 key={uni.id}
+                 to={`/university/${uni.id}`}
+                 className="block relative rounded-xl overflow-hidden transition-all duration-300 transform hover:-translate-y-1 hover:shadow-xl hover:shadow-gray-300 dark:hover:shadow-black/50"
+               >
+                 <Card className="h-full border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950 p-6 flex flex-col justify-between">
+                   <CardHeader className="p-0 mb-4">
+                     <CardTitle className="text-xl font-bold tracking-tight text-gray-900 dark:text-gray-50">{uni.name}</CardTitle>
+                   </CardHeader>
+                   <CardContent className="p-0 text-sm space-y-2 text-gray-600 dark:text-gray-400">
+                     <p className="flex items-center gap-2">
+                       <span className="text-gray-400 dark:text-gray-600">📍</span>
+                       {uni.city}, {uni.country}
+                     </p>
+                     <p className="flex items-center gap-2">
+                       <span className="text-gray-400 dark:text-gray-600">🎓</span>
+                       {uni.degree_level}
+                     </p>
+                     <div className="flex flex-col gap-1 mt-2 border-t pt-2 border-gray-100 dark:border-gray-800">
+                       <p className="flex items-center gap-2">
+                         <span className="text-gray-400 dark:text-gray-600">💰</span>
+                         Tuition: **${uni.tuition_fee}**
+                       </p>
+                       <p className="flex items-center gap-2">
+                         <span className="text-gray-400 dark:text-gray-600">📝</span>
+                         App Fee: **${uni.application_fee}**
+                       </p>
+                     </div>
+                     <a
+                       href={uni.website}
+                       target="_blank"
+                       rel="noreferrer"
+                       className="text-blue-600 hover:text-blue-500 hover:underline mt-4 inline-flex items-center font-medium"
+                       onClick={(e) => e.stopPropagation()}
+                     >
+                       Visit Website →
+                     </a>
+                   </CardContent>
+                 </Card>
+               </Link>
               ))}
             </div>
           ) : (
