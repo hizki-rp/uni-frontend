@@ -52,7 +52,7 @@ export default function UniversityDetail() {
           <CardContent className="space-y-3">
             <p>
               <Label>Website:</Label>{" "}
-              <a href={university.website} target="_blank" rel="noreferrer" className="text-blue-600 hover:underline">
+              <a href={university.university_link} target="_blank" rel="noreferrer" className="text-blue-600 hover:underline">
                 Visit
               </a>
             </p>

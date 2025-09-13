@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 
 export default function Login() {
-  const [formData, setFormData] = useState({ email: "", password: "" });
+  const [formData, setFormData] = useState({ username: "", password: "" });
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
@@ -59,10 +59,10 @@ export default function Login() {
           Email
         </Label>
         <Input
-          id="email"
-          type="email"
-          name="email"
-          value={formData.email}
+          id="username"
+          type="text"
+          name="username"
+          value={formData.username}
           onChange={handleChange}
           placeholder="you@example.com"
           required
