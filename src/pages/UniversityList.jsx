@@ -29,6 +29,8 @@ const UniversityList = () => {
   const [query, setQuery] = React.useState("");
   const [showSidebar, setShowSidebar] = React.useState(false);
 
+
+
   const [filters, setFilters] = React.useState({
     country: "",
     city: "",
@@ -43,7 +45,7 @@ const UniversityList = () => {
     const fetchUniversities = async () => {
       try {
         const response = await fetch(
-          "https://uni-api-w0ms.onrender.com/api/universities/"
+          "http://127.0.0.1:8000/api/universities/"
         );
         const data = await response.json();
         setUniversities(data);
@@ -135,7 +137,7 @@ const UniversityList = () => {
             />
           </div>
 
-          <div className="mb-6">
+     {/*     <div className="mb-6">
             <Label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Degree Level</Label>
             <Select
               value={filters.degree || "any"}
@@ -154,6 +156,7 @@ const UniversityList = () => {
               </SelectContent>
             </Select>
           </div>
+            */}
 
           <div className="mb-6">
             <Label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Max Application Fee ($)</Label>
@@ -201,7 +204,7 @@ const UniversityList = () => {
         <main className="flex-1 p-6 md:p-8 font-sans bg-gray-50 dark:bg-gray-950">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6 mb-12">
             <h2 className="text-3xl font-extrabold tracking-tight text-gray-900 dark:text-gray-50">
-              Search Universities
+              Search Universities {filteredUniversities.length}
             </h2>
             <div className="flex items-center gap-3 w-full md:w-auto">
               <Input
@@ -227,6 +230,7 @@ const UniversityList = () => {
                   <Link
                   key={uni.id}
                   to={`/university/${uni.id}`}
+                  
                   className="block relative rounded-xl overflow-hidden transition-all duration-300 transform hover:-translate-y-1 hover:shadow-xl hover:shadow-gray-300 dark:hover:shadow-black/50"
                 >
                   <Card className="h-full border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950 p-6 flex flex-col justify-between">

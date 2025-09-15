@@ -68,20 +68,36 @@ export default function UniversityDetail() {
           </CardContent>
         </Card>
 
-        {/* Academics & Costs Card */}
-        <Card className="shadow-md">
-          <CardHeader>
-            <CardTitle>Academics & Costs</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-3">
-            <p><Label>Course Offered:</Label> {university.course_offered}</p>
-            <p><Label>Tuition Fee:</Label> ${university.tuition_fee}/year</p>
-            <p><Label>Scholarships:</Label></p>
-            <p className="pl-4 text-gray-700 whitespace-pre-line">
-              {university.scholarship_info || "No scholarships listed."}
-            </p>
-          </CardContent>
-        </Card>
+      {/* Academics & Costs Card */}
+      <Card className="shadow-md">
+        <CardHeader>
+          <CardTitle>Academics & Costs</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-3">
+          <p><Label>Course Offered:</Label> {university.course_offered}</p>
+          <p><Label>Tuition Fee:</Label> ${university.tuition_fee}/year</p>
+          <p><Label>Scholarships:</Label></p>
+          <div className="pl-4 text-gray-700 whitespace-pre-line">
+            {university.scholarships && university.scholarships.length > 0 ? (
+              university.scholarships.map((scholar, index) => (
+                <div key={index}>
+                  <p><Label>Scholarship Name:</Label> {scholar.name}</p>
+                  <p><Label>Scholarship Amount:</Label> {scholar.coverage}</p>
+                  <p><Label>Eligibility:</Label> {scholar.eligibility}</p>
+                  <p><Label>Link:</Label> <a href={scholar.link} target="_blank" rel="noopener noreferrer">
+                  <a href= {scholar.link} target="_blank" rel="noreferrer" className="text-blue-600 hover:underline">
+                   scholarship link
+                  </a>   
+                    </a>
+                    </p>
+                </div>
+              ))
+            ) : (
+              <p>No scholarships listed.</p>
+            )}
+          </div>
+        </CardContent>
+      </Card>
       </div>
 
       {/* About Section */}
@@ -99,3 +115,4 @@ export default function UniversityDetail() {
     </div>
   );
 }
+
