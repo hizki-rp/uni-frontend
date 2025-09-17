@@ -1,16 +1,20 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "../context/context";
 import { Button } from "@/components/ui/button";
+import { API_BASE_URL } from "../apiConfig";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import {
-  Select,
-  SelectTrigger,
-  SelectContent,
-  SelectItem,
-  SelectValue,
-} from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+  SheetFooter,
+} from "@/components/ui/sheet";
 
 // I've removed the unused import `i`
 
@@ -22,263 +26,333 @@ const LoadingSpinner = () => (
   </div>
 );
 
+// --- Error Display Component ---
+const ErrorMessage = ({ message }) => (
+  <Card className="mt-10 w-full max-w-md mx-auto bg-red-50 border-red-200">
+    <CardHeader>
+      <CardTitle className="text-red-700 text-center">Access Denied</CardTitle>
+    </CardHeader>
+    <CardContent className="text-center">
+      <p className="text-red-600 mb-4">{message}</p>
+      {/subscription/i.test(message) && (
+        <Button asChild>
+          <Link to="/dashboard">Go to Dashboard to Renew</Link>
+        </Button>
+      )}
+    </CardContent>
+  </Card>
+);
 
 const UniversityList = () => {
   const [universities, setUniversities] = React.useState([]);
   const [loading, setLoading] = React.useState(true);
   const [query, setQuery] = React.useState("");
-  const [showSidebar, setShowSidebar] = React.useState(false);
+  const [error, setError] = React.useState(null);
+  const { authTokens, logoutUser } = useAuth();
+  const navigate = useNavigate();
 
-
-
-  const [filters, setFilters] = React.useState({
+  const initialFilters = {
     country: "",
     city: "",
     course: "",
     degree: "",
     maxAppFee: "",
     maxTuition: "",
-  });
+  };
+
+  const [filters, setFilters] = React.useState(initialFilters);
+  const [tempFilters, setTempFilters] = React.useState(initialFilters);
+  const [isFilterModalOpen, setIsFilterModalOpen] = React.useState(false);
 
   // Fetch universities
   React.useEffect(() => {
     const fetchUniversities = async () => {
       try {
-        const response = await fetch(
-          "http://127.0.0.1:8000/api/universities/"
-        );
+        const response = await fetch(`${API_BASE_URL}/api/universities/`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer " + String(authTokens.access),
+          },
+        });
+        if (response.status === 401) {
+          // Unauthorized or token expired
+          logoutUser();
+          return;
+        }
+        // This is the key change: handle non-200 responses.
+        if (!response.ok) {
+          const errorData = await response.json();
+          // The custom permission message is in `errorData.detail`
+          throw new Error(
+            errorData.detail || `Request failed with status ${response.status}`
+          );
+        }
         const data = await response.json();
-        setUniversities(data);
+        // Handle both paginated and non-paginated API responses
+        setUniversities(data.results || data || []);
       } catch (err) {
-        console.error("Fetch error:", err);
+        console.error("Fetch error:", err.message);
+        setError(err.message);
       } finally {
         setLoading(false);
       }
     };
     fetchUniversities();
-  }, []);
+  }, [authTokens, navigate, logoutUser]);
 
-  // --- 2. Fixed Filtering + Search Logic ---
-  const filteredUniversities = universities.filter((uni) => {
-    const search = query.toLowerCase();
+  // --- 2. Memoized Filtering + Search Logic ---
+  const filteredUniversities = React.useMemo(
+    () =>
+      universities.filter((uni) => {
+        const search = query.toLowerCase();
 
-    // The main fix is adding optional chaining (?.) before calling .toLowerCase() or .includes().
-    // This prevents the app from crashing if uni.name, uni.country, etc., are null or undefined.
-    const matchesSearch = !query ||
-      (uni.name?.toLowerCase().includes(search) ?? false) ||
-      (uni.country?.toLowerCase().includes(search) ?? false) ||
-      (uni.course_offered?.toLowerCase().includes(search) ?? false);
+        // The main fix is adding optional chaining (?.) before calling .toLowerCase() or .includes().
+        // This was incorrect and would crash. The fix is to use `(uni.field ?? '')` to provide a
+        // fallback empty string for nullish values before calling string methods.
+        const matchesSearch =
+          !query ||
+          (uni.name ?? "").toLowerCase().includes(search) ||
+          (uni.country ?? "").toLowerCase().includes(search) ||
+          (uni.course_offered ?? "").toLowerCase().includes(search);
 
-    const matchesFilters =
-      (!filters.country || (uni.country?.toLowerCase() === filters.country.toLowerCase() ?? false)) &&
-      (!filters.city || (uni.city?.toLowerCase() === filters.city.toLowerCase() ?? false)) &&
-      (!filters.course || (uni.course_offered?.toLowerCase().includes(filters.course.toLowerCase()) ?? false)) &&
-      (!filters.degree || (uni.degree_level?.toLowerCase() === filters.degree.toLowerCase() ?? false)) &&
-      // --- 3. Fixed Empty Field Filtering ---
-      // This logic now correctly ignores the filter if the input is empty by checking for the filter value first.
-      (!filters.maxAppFee || parseFloat(uni.application_fee) <= parseFloat(filters.maxAppFee)) &&
-      (!filters.maxTuition || parseFloat(uni.tuition_fee) <= parseFloat(filters.maxTuition));
+        const matchesFilters =
+          (!filters.country ||
+            (uni.country ?? "").toLowerCase() ===
+              filters.country.toLowerCase()) &&
+          (!filters.city ||
+            (uni.city ?? "").toLowerCase() === filters.city.toLowerCase()) &&
+          (!filters.course ||
+            (uni.course_offered ?? "")
+              .toLowerCase()
+              .includes(filters.course.toLowerCase())) &&
+          (!filters.degree ||
+            (uni.degree_level ?? "").toLowerCase() ===
+              filters.degree.toLowerCase()) &&
+          // --- 3. Fixed Empty Field Filtering ---
+          // This logic now correctly ignores the filter if the input is empty by checking for the filter value first.
+          (!filters.maxAppFee ||
+            parseFloat(uni.application_fee) <= parseFloat(filters.maxAppFee)) &&
+          (!filters.maxTuition ||
+            parseFloat(uni.tuition_fee) <= parseFloat(filters.maxTuition));
 
-    return matchesSearch && matchesFilters;
-  });
+        return matchesSearch && matchesFilters;
+      }),
+    [universities, query, filters]
+  );
+
+  const handleApplyFilters = () => {
+    setFilters(tempFilters);
+    setIsFilterModalOpen(false);
+  };
+
+  const handleClearFilters = () => {
+    setFilters(initialFilters);
+    setTempFilters(initialFilters);
+  };
+
+  const handleFilterModalOpenChange = (open) => {
+    if (open) {
+      // When the modal is about to open, sync the temp filters with the active ones.
+      setTempFilters(filters);
+    }
+    setIsFilterModalOpen(open);
+  };
+
+  const FilterModal = (
+    <Sheet open={isFilterModalOpen} onOpenChange={handleFilterModalOpenChange}>
+      <SheetTrigger asChild>
+        <Button variant="outline">Filter</Button>
+      </SheetTrigger>
+      <SheetContent
+        side="left"
+        className="w-full md:w-[400px] sm:max-w-sm overflow-y-auto"
+      >
+        <SheetHeader>
+          <SheetTitle>Filter Universities</SheetTitle>
+          <SheetDescription>
+            Apply filters to find the universities that match your criteria.
+          </SheetDescription>
+        </SheetHeader>
+        <div className="py-6 space-y-6">
+          <div className="space-y-2">
+            <Label>Country</Label>
+            <Input
+              placeholder="e.g. USA"
+              value={tempFilters.country}
+              onChange={(e) =>
+                setTempFilters({ ...tempFilters, country: e.target.value })
+              }
+            />
+          </div>
+          <div className="space-y-2">
+            <Label>City</Label>
+            <Input
+              placeholder="e.g. London"
+              value={tempFilters.city}
+              onChange={(e) =>
+                setTempFilters({ ...tempFilters, city: e.target.value })
+              }
+            />
+          </div>
+          <div className="space-y-2">
+            <Label>Course/Program</Label>
+            <Input
+              placeholder="e.g. Computer Science"
+              value={tempFilters.course}
+              onChange={(e) =>
+                setTempFilters({ ...tempFilters, course: e.target.value })
+              }
+            />
+          </div>
+          <div className="space-y-2">
+            <Label>Max Application Fee ($)</Label>
+            <Input
+              type="number"
+              value={tempFilters.maxAppFee}
+              onChange={(e) =>
+                setTempFilters({ ...tempFilters, maxAppFee: e.target.value })
+              }
+            />
+          </div>
+          <div className="space-y-2">
+            <Label>Max Tuition Fee ($)</Label>
+            <Input
+              type="number"
+              value={tempFilters.maxTuition}
+              onChange={(e) =>
+                setTempFilters({ ...tempFilters, maxTuition: e.target.value })
+              }
+            />
+          </div>
+        </div>
+        <SheetFooter>
+          <Button variant="outline" onClick={() => setIsFilterModalOpen(false)}>
+            Cancel
+          </Button>
+          <Button onClick={handleApplyFilters}>Save Changes</Button>
+        </SheetFooter>
+      </SheetContent>
+    </Sheet>
+  );
 
   return (
-    <div className="min-h-screen bg-gray-50 py-6">
-      <div className="flex flex-col md:flex-row gap-6">
-        {/* Sidebar Toggle (Mobile Only) */}
-        <div className="md:hidden flex justify-end px-4 mb-4">
-          <Button
-            variant="outline"
-            onClick={() => setShowSidebar((prev) => !prev)}
-          >
-            {showSidebar ? "Hide Filters" : "Show Filters"}
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-950 py-6">
+      <main className="container mx-auto p-4 md:p-8 font-sans">
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6 mb-12">
+          <h2 className="text-3xl font-extrabold tracking-tight text-gray-900 dark:text-gray-50">
+            Explore Universities ({filteredUniversities.length})
+          </h2>
+          <div className="flex items-center gap-3 w-full md:w-auto">
+            <Input
+              placeholder="Search by name, country, or course..."
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              className="flex-1 min-w-0 md:min-w-[300px] rounded-md pl-5 pr-4 py-2 border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-600 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-300"
+            />
+            {/* Search button can be removed if search is instant */}
+            {/* <Button>Search</Button> */}
+          </div>
+        </div>
+
+        <div className="flex items-center gap-4 mb-8">
+          {FilterModal}
+          <Button variant="ghost" onClick={handleClearFilters}>
+            Clear Filters
           </Button>
         </div>
 
-        {/* Sidebar */}
-        <aside
-          className={`${
-            showSidebar ? "block" : "hidden"
-          } md:block w-full md:w-64 bg-gray-50 dark:bg-gray-900 p-8 rounded-3xl shadow-xl shadow-gray-200/50 dark:shadow-black/30 h-fit sticky top-6 transition-all duration-300 ease-in-out font-sans border border-gray-100 dark:border-gray-800`}
-        >
-          <h3 className="text-xl font-bold mb-6 text-gray-800 dark:text-gray-50">Filters</h3>
-
-          <div className="mb-6">
-            <Label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Country</Label>
-            <Input
-              placeholder="e.g. USA"
-              value={filters.country}
-              onChange={(e) =>
-                setFilters({ ...filters, country: e.target.value })
-              }
-              className="bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-500 rounded-lg focus:ring-blue-500 focus:border-blue-500 transition-colors"
-            />
-          </div>
-
-          <div className="mb-6">
-            <Label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">City</Label>
-            <Input
-              placeholder="e.g. London"
-              value={filters.city}
-              onChange={(e) => setFilters({ ...filters, city: e.target.value })}
-              className="bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-500 rounded-lg focus:ring-blue-500 focus:border-blue-500 transition-colors"
-            />
-          </div>
-
-          <div className="mb-6">
-            <Label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Course/Program</Label>
-            <Input
-              placeholder="e.g. Computer Science"
-              value={filters.course}
-              onChange={(e) =>
-                setFilters({ ...filters, course: e.target.value })
-              }
-              className="bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-500 rounded-lg focus:ring-blue-500 focus:border-blue-500 transition-colors"
-            />
-          </div>
-
-     {/*     <div className="mb-6">
-            <Label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Degree Level</Label>
-            <Select
-              value={filters.degree || "any"}
-              onValueChange={(value) =>
-                setFilters({ ...filters, degree: value === "any" ? "" : value })
-              }
-            >
-              <SelectTrigger className="bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-100 rounded-lg focus:ring-blue-500 focus:border-blue-500 transition-colors">
-                <SelectValue placeholder="Any" />
-              </SelectTrigger>
-              <SelectContent className="bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-700">
-                <SelectItem value="any">Any</SelectItem>
-                <SelectItem value="bachelor">Bachelor</SelectItem>
-                <SelectItem value="master">Master</SelectItem>
-                <SelectItem value="both">Both</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-            */}
-
-          <div className="mb-6">
-            <Label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Max Application Fee ($)</Label>
-            <Input
-              type="number"
-              value={filters.maxAppFee}
-              onChange={(e) =>
-                setFilters({ ...filters, maxAppFee: e.target.value })
-              }
-              className="bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-100 rounded-lg focus:ring-blue-500 focus:border-blue-500 transition-colors"
-            />
-          </div>
-
-          <div className="mb-6">
-            <Label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Max Tuition Fee ($)</Label>
-            <Input
-              type="number"
-              value={filters.maxTuition}
-              onChange={(e) =>
-                setFilters({ ...filters, maxTuition: e.target.value })
-              }
-              className="bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-100 rounded-lg focus:ring-blue-500 focus:border-blue-500 transition-colors"
-            />
-          </div>
-
-          <Button
-            variant="outline"
-            className="w-full mt-4 bg-transparent border-2 border-gray-400 dark:border-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
-            onClick={() =>
-              setFilters({
-                country: "",
-                city: "",
-                course: "",
-                degree: "",
-                maxAppFee: "",
-                maxTuition: "",
-              })
-            }
-          >
-            Reset Filters
-          </Button>
-        </aside>
-
-        {/* Main Content */}
-        <main className="flex-1 p-6 md:p-8 font-sans bg-gray-50 dark:bg-gray-950">
-          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6 mb-12">
-            <h2 className="text-3xl font-extrabold tracking-tight text-gray-900 dark:text-gray-50">
-              Search Universities {filteredUniversities.length}
-            </h2>
-            <div className="flex items-center gap-3 w-full md:w-auto">
-              <Input
-                placeholder="Search by name, country, or course..."
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-                className="flex-1 min-w-0 md:min-w-[300px] rounded-full pl-5 pr-4 py-2 border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-600 shadow-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-300"
-              />
-              <Button
-                className="bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-full px-6 py-2 transition-transform transform hover:scale-105 shadow-md"
-              >
-                Search
-              </Button>
-            </div>
-          </div>
-
-          {/* Using the new LoadingSpinner component */}
-          {loading ? (
-            <LoadingSpinner />
-          ) : filteredUniversities.length > 0 ? (
-            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-              {filteredUniversities.map((uni) => (
-                  <Link
-                  key={uni.id}
-                  to={`/university/${uni.id}`}
-                  
-                  className="block relative rounded-xl overflow-hidden transition-all duration-300 transform hover:-translate-y-1 hover:shadow-xl hover:shadow-gray-300 dark:hover:shadow-black/50"
-                >
-                  <Card className="h-full border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950 p-6 flex flex-col justify-between">
-                    <CardHeader className="p-0 mb-4">
-                      <CardTitle className="text-xl font-bold tracking-tight text-gray-900 dark:text-gray-50">{uni.name}</CardTitle>
-                    </CardHeader>
-                    <CardContent className="p-0 text-sm space-y-2 text-gray-600 dark:text-gray-400">
+        {/* Using the new LoadingSpinner component */}
+        {loading ? (
+          <LoadingSpinner />
+        ) : error ? (
+          <ErrorMessage message={error} />
+        ) : filteredUniversities.length > 0 ? (
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+            {filteredUniversities.map((uni) => (
+              <Link key={uni.id} to={`/university/${uni.id}`} className="block">
+                <Card className="h-full border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900/50 p-0 flex flex-col justify-between transition-all duration-300 hover:shadow-lg hover:-translate-y-1 hover:border-blue-500">
+                  <CardHeader className="p-4">
+                    <CardTitle className="text-lg font-bold tracking-tight text-gray-900 dark:text-gray-50 leading-tight">
+                      {uni.name}
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="p-4 pt-0 text-sm space-y-2 text-gray-600 dark:text-gray-400">
+                    <p className="flex items-center gap-2">
+                      <span className="text-muted-foreground">
+                        <img
+                          src="https://img.icons8.com/?size=100&id=34070&format=png&color=000000"
+                          width={16}
+                          className="dark:invert"
+                        />
+                      </span>
+                      {uni.city}, {uni.country}
+                    </p>
+                    <p className="flex items-center gap-2">
+                      <span className="text-muted-foreground">
+                        <img
+                          src="https://img.icons8.com/?size=100&id=QlB1OMIqTVgl&format=png&color=000000"
+                          width={16}
+                          className="dark:invert"
+                        />
+                      </span>
+                      {uni.degree_level || "All Levels"}
+                    </p>
+                    <div className="flex flex-col gap-1 mt-2 border-t pt-2 border-gray-100 dark:border-gray-800">
                       <p className="flex items-center gap-2">
-                        <span className="text-gray-400 dark:text-gray-600"><img src="https://img.icons8.com/?size=100&id=34070&format=png&color=000000" width={20}/></span>
-                        {uni.city}, {uni.country}
+                        <span className="text-muted-foreground">
+                          <img
+                            src="https://img.icons8.com/?size=100&id=cBCf91yx3L2N&format=png&color=000000"
+                            width={16}
+                            height={16}
+                            className="dark:invert"
+                          />
+                        </span>
+                        Tuition:{" "}
+                        <span className="font-bold text-gray-800 dark:text-gray-200">
+                          ${uni.tuition_fee}
+                        </span>
                       </p>
                       <p className="flex items-center gap-2">
-                        <span className="text-gray-400 dark:text-gray-600"><img src="https://img.icons8.com/?size=100&id=QlB1OMIqTVgl&format=png&color=000000" width={20} /></span>
-                        {uni.degree_level}
+                        <span className="text-muted-foreground">
+                          <img
+                            src="https://img.icons8.com/?size=100&id=78231&format=png&color=000000 "
+                            width={16}
+                            className="dark:invert"
+                          />
+                        </span>
+                        App Fee:{" "}
+                        <span className="font-bold text-gray-800 dark:text-gray-200">
+                          ${uni.application_fee}
+                        </span>
                       </p>
-                      <div className="flex flex-col gap-1 mt-2 border-t pt-2 border-gray-100 dark:border-gray-800">
-                        <p className="flex items-center gap-2">
-                          <span className="text-gray-400 dark:text-gray-600 "><img src="https://img.icons8.com/?size=100&id=cBCf91yx3L2N&format=png&color=000000" width={20} height={20}/></span>
-                          Tuition: <span className="font-bold">${uni.tuition_fee}</span>
-                        </p>
-                        <p className="flex items-center gap-2">
-                          <span className="text-gray-400 dark:text-gray-600"><img src="https://img.icons8.com/?size=100&id=78231&format=png&color=000000 " width={20}/></span>
-                          App Fee: <span className="font-bold">${uni.application_fee}</span>
-                        </p>
-                      </div>
-                      <a
-                        href={uni.university_link}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="text-blue-600 hover:text-blue-500 hover:underline mt-4 inline-flex items-center font-medium"
-                        onClick={(e) => e.stopPropagation()}
-                      >
-                        Visit Website →
-                      </a>
-                    </CardContent>
-                  </Card>
-                </Link>
-              ))}
-            </div>
-          ) : (
-            <p className="text-center text-gray-500 italic mt-10">
-              No universities match your search criteria.
+                    </div>
+                  </CardContent>
+                  <SheetFooter className="p-4 pt-0">
+                    <Button
+                      variant="link"
+                      className="text-blue-600 hover:text-blue-500 p-0 h-auto justify-start"
+                    >
+                      View Details →
+                    </Button>
+                  </SheetFooter>
+                </Card>
+              </Link>
+            ))}
+          </div>
+        ) : (
+          <div className="text-center py-16">
+            <h3 className="text-xl font-semibold text-gray-800 dark:text-gray-200">
+              No Universities Found
+            </h3>
+            <p className="text-gray-500 mt-2">
+              Try adjusting your search or filter criteria.
             </p>
-          )}
-        </main>
-      </div>
+          </div>
+        )}
+      </main>
     </div>
   );
-}
+};
 
 export default UniversityList;
