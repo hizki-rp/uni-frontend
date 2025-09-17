@@ -153,7 +153,11 @@ const RegisterPage = () => {
                 required
               />
             </div>
-            <Button type="submit" className="w-full" disabled={loading}>
+            <Button
+              type="submit"
+              className="w-full bg-blue-600"
+              disabled={loading}
+            >
               {loading ? "Registering..." : "Register"}
             </Button>
           </form>

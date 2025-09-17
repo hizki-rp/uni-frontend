@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "../context/context";
 import { Badge } from "@/components/ui/badge";
@@ -27,41 +27,61 @@ const DashboardPage = () => {
   const [renewalError, setRenewalError] = useState(null);
   const { authTokens, logoutUser } = useAuth();
 
-  useEffect(() => {
-    const fetchDashboardData = async () => {
-      if (!authTokens) {
-        setLoading(false);
+  const fetchDashboardData = useCallback(async () => {
+    if (!authTokens) {
+      setLoading(false);
+      return;
+    }
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/dashboard/`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + String(authTokens.access),
+        },
+      });
+
+      if (response.status === 401) {
+        logoutUser();
         return;
       }
-      try {
-        const response = await fetch(`${API_BASE_URL}/api/dashboard/`, {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: "Bearer " + String(authTokens.access),
-          },
-        });
 
-        if (response.status === 401) {
-          logoutUser();
-          return;
-        }
-
-        if (!response.ok) {
-          throw new Error("Failed to fetch dashboard data");
-        }
-
-        const data = await response.json();
-        setDashboardData(data);
-      } catch (err) {
-        setError(err.message);
-      } finally {
-        setLoading(false);
+      if (!response.ok) {
+        throw new Error("Failed to fetch dashboard data");
       }
-    };
 
-    fetchDashboardData();
+      const data = await response.json();
+      setDashboardData(data);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
   }, [authTokens, logoutUser]);
+
+  // Initial data fetch
+  useEffect(() => {
+    fetchDashboardData();
+  }, [fetchDashboardData]);
+
+  // This effect polls for updates, which is useful after a payment redirect
+  // in case the webhook from Chapa is slightly delayed.
+  useEffect(() => {
+    // If data is loaded and subscription is active, or if there's an error, no need to poll.
+    if (dashboardData?.subscription_status === "active" || error) {
+      return;
+    }
+
+    let attempts = 0;
+    const poller = setInterval(() => {
+      console.log("Polling for subscription update...");
+      fetchDashboardData();
+      attempts++;
+      if (attempts >= 5) clearInterval(poller);
+    }, 3000); // Poll every 3 seconds
+
+    return () => clearInterval(poller);
+  }, [dashboardData, error, fetchDashboardData]);
 
   const renderUniversityList = (universities) => {
     if (!universities || universities.length === 0) {
@@ -143,13 +163,15 @@ const DashboardPage = () => {
               Status:{" "}
               <Badge
                 variant={
-                  dashboardData.subscription_status === "active"
-                    ? "default"
-                    : dashboardData.subscription_status === "expired"
+                  dashboardData.subscription_status === "expired"
                     ? "destructive"
                     : "secondary"
                 }
-                className="capitalize"
+                className={`capitalize ${
+                  dashboardData.subscription_status === "active"
+                    ? "bg-green-600 text-white hover:bg-green-600"
+                    : ""
+                }`}
               >
                 {dashboardData.subscription_status}
               </Badge>
@@ -163,9 +185,9 @@ const DashboardPage = () => {
             <Button
               onClick={handleRenewSubscription}
               disabled={isRenewing}
-              className="w-full"
+              className="w-full bg-blue-600 text-white hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600"
             >
-              {isRenewing ? "Processing..." : "Renew for 1 Month"}
+              {isRenewing ? "Processing..." : "Renew for 1 Month (100 ETB)"}
             </Button>
             {renewalError && (
               <p className="text-sm text-red-500">{renewalError}</p>

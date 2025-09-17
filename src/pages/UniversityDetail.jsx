@@ -120,17 +120,34 @@ export default function UniversityDetail() {
           <Button
             onClick={() => handleAddToDashboard("favorites")}
             variant="outline"
+            className="text-blue-600 border-blue-600 hover:bg-blue-50 hover:text-blue-700 dark:text-blue-400 dark:border-blue-400 dark:hover:bg-blue-900/20"
           >
             Add to Favorites
           </Button>
           <Button
             onClick={() => handleAddToDashboard("toApply")}
             variant="outline"
+            className="text-blue-600 border-blue-600 hover:bg-blue-50 hover:text-blue-700 dark:text-blue-400 dark:border-blue-400 dark:hover:bg-blue-900/20"
           >
             Plan to Apply
           </Button>
-          <Button onClick={() => handleAddToDashboard("applied")}>
+          <Button
+            onClick={() => handleAddToDashboard("applied")}
+            className="bg-blue-600 text-white hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600"
+          >
             Mark as Applied
+          </Button>
+          <Button
+            onClick={() => handleAddToDashboard("accepted")}
+            className="bg-blue-600 text-white hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600"
+          >
+            Mark as Accepted
+          </Button>
+          <Button
+            onClick={() => handleAddToDashboard("visa_approved")}
+            className="bg-blue-600 text-white hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600"
+          >
+            Mark as Visa Approved
           </Button>
         </CardContent>
       </Card>

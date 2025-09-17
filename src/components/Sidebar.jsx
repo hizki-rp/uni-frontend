@@ -73,8 +73,8 @@ const Sidebar = () => {
         {user && (
           <Button
             onClick={logoutUser}
-            variant="ghost"
-            className="w-full justify-start"
+            variant="destructive"
+            className="w-full justify-start bg-red-600 text-white hover:bg-red-700 dark:bg-red-700 dark:hover:bg-red-800"
           >
             <LogOut className="mr-2 h-4 w-4" />
             Logout

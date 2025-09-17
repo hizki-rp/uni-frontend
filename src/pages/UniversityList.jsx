@@ -162,7 +162,12 @@ const UniversityList = () => {
   const FilterModal = (
     <Sheet open={isFilterModalOpen} onOpenChange={handleFilterModalOpenChange}>
       <SheetTrigger asChild>
-        <Button variant="outline">Filter</Button>
+        <Button
+          variant="outline"
+          className="text-blue-600 border-blue-600 hover:bg-blue-50 hover:text-blue-700 dark:text-blue-400 dark:border-blue-400 dark:hover:bg-blue-900/20"
+        >
+          Filter
+        </Button>
       </SheetTrigger>
       <SheetContent
         side="left"
@@ -230,7 +235,12 @@ const UniversityList = () => {
           <Button variant="outline" onClick={() => setIsFilterModalOpen(false)}>
             Cancel
           </Button>
-          <Button onClick={handleApplyFilters}>Save Changes</Button>
+          <Button
+            onClick={handleApplyFilters}
+            className="bg-blue-600 text-white hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600"
+          >
+            Save Changes
+          </Button>
         </SheetFooter>
       </SheetContent>
     </Sheet>

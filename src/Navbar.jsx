@@ -84,7 +84,7 @@ export default function Navbar() {
                     <span className="sr-only">Toggle navigation menu</span>
                   </Button>
                 </SheetTrigger>
-                <SheetContent side="left" className="p-0">
+                <SheetContent side="right" className="p-0">
                   <Sidebar />
                 </SheetContent>
               </Sheet>
@@ -93,8 +93,8 @@ export default function Navbar() {
           {user ? (
             <Button
               onClick={logoutUser}
-              variant="outline"
-              className="hidden md:flex"
+              variant="destructive"
+              className="hidden md:flex bg-red-600 text-white hover:bg-red-700 dark:bg-red-700 dark:hover:bg-red-800"
             >
               Logout
             </Button>

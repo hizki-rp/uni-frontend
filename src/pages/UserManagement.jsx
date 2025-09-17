@@ -382,7 +382,10 @@ const UserManagement = () => {
       <Card>
         <CardHeader className="flex flex-row items-center justify-between">
           <CardTitle>User Management</CardTitle>
-          <Button onClick={() => setIsCreateSheetOpen(true)}>
+          <Button
+            onClick={() => setIsCreateSheetOpen(true)}
+            className="bg-blue-600 text-white hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600"
+          >
             Create User
           </Button>
         </CardHeader>
@@ -429,6 +432,7 @@ const UserManagement = () => {
                     <Button
                       variant="outline"
                       size="sm"
+                      className="text-blue-600 border-blue-600 hover:bg-blue-50 hover:text-blue-700 dark:text-blue-400 dark:border-blue-400 dark:hover:bg-blue-900/20"
                       onClick={() => handleEditClick(user)}
                     >
                       Manage
@@ -518,6 +522,7 @@ const UserManagement = () => {
                 <Button
                   type="button"
                   variant="outline"
+                  className="text-blue-600 border-blue-600 hover:bg-blue-50 hover:text-blue-700 dark:text-blue-400 dark:border-blue-400 dark:hover:bg-blue-900/20"
                   onClick={handleExtendSubscription}
                 >
                   +30 days
@@ -529,7 +534,12 @@ const UserManagement = () => {
             <SheetClose asChild>
               <Button variant="outline">Cancel</Button>
             </SheetClose>
-            <Button onClick={handleUpdateUser}>Save Changes</Button>
+            <Button
+              onClick={handleUpdateUser}
+              className="bg-blue-600 text-white hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600"
+            >
+              Save Changes
+            </Button>
           </SheetFooter>
         </SheetContent>
       </Sheet>
@@ -582,7 +592,12 @@ const UserManagement = () => {
             <SheetClose asChild>
               <Button variant="outline">Cancel</Button>
             </SheetClose>
-            <Button onClick={handleCreateUser}>Create User</Button>
+            <Button
+              onClick={handleCreateUser}
+              className="bg-blue-600 text-white hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600"
+            >
+              Create User
+            </Button>
           </SheetFooter>
         </SheetContent>
       </Sheet>

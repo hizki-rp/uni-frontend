@@ -179,7 +179,11 @@ const AdminUniversityPage = () => {
         </CardHeader>
         <CardContent className="flex items-center gap-4">
           <Input type="file" accept=".json" onChange={handleFileChange} />
-          <Button onClick={handleFileUpload} disabled={!selectedFile}>
+          <Button
+            onClick={handleFileUpload}
+            disabled={!selectedFile}
+            className="bg-blue-600 text-white hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600"
+          >
             Upload JSON
           </Button>
         </CardContent>
@@ -188,7 +192,12 @@ const AdminUniversityPage = () => {
       <Card>
         <CardHeader className="flex flex-row items-center justify-between">
           <CardTitle>University List</CardTitle>
-          <Button onClick={openCreateDialog}>Create University</Button>
+          <Button
+            onClick={openCreateDialog}
+            className="bg-blue-600 text-white hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600"
+          >
+            Create University
+          </Button>
         </CardHeader>
         <CardContent>
           <Table>
@@ -208,6 +217,7 @@ const AdminUniversityPage = () => {
                     <Button
                       variant="outline"
                       size="sm"
+                      className="text-blue-600 border-blue-600 hover:bg-blue-50 hover:text-blue-700 dark:text-blue-400 dark:border-blue-400 dark:hover:bg-blue-900/20"
                       onClick={() => openEditDialog(uni)}
                     >
                       Edit
@@ -272,7 +282,12 @@ const AdminUniversityPage = () => {
                   Cancel
                 </Button>
               </DialogClose>
-              <Button type="submit">Save changes</Button>
+              <Button
+                type="submit"
+                className="bg-blue-600 text-white hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600"
+              >
+                Save changes
+              </Button>
             </DialogFooter>
           </form>
         </DialogContent>
