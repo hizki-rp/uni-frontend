@@ -40,6 +40,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Checkbox } from "@/components/ui/checkbox";
+import LoadingSpinner from "../components/LoadingSpinner";
 
 const UserManagement = () => {
   const [users, setUsers] = useState([]);
@@ -272,11 +273,7 @@ const UserManagement = () => {
   };
 
   if (loading) {
-    return (
-      <div className="flex justify-center items-center h-64">
-        <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-blue-500"></div>
-      </div>
-    );
+    return <LoadingSpinner size="large" className="h-screen" />;
   }
 
   if (error) {
@@ -401,7 +398,7 @@ const UserManagement = () => {
                 <TableHead>Subscription</TableHead>
                 <TableHead>Sub. End Date</TableHead>
                 <TableHead>Date Joined</TableHead>
-                <TableHead>Actions</TableHead>
+                <TableHead className="text-right">Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -429,22 +426,23 @@ const UserManagement = () => {
                     {new Date(user.date_joined).toLocaleDateString()}
                   </TableCell>
                   <TableCell>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="text-blue-600 border-blue-600 hover:bg-blue-50 hover:text-blue-700 dark:text-blue-400 dark:border-blue-400 dark:hover:bg-blue-900/20"
-                      onClick={() => handleEditClick(user)}
-                    >
-                      Manage
-                    </Button>
-                    <Button
-                      variant="destructive"
-                      size="sm"
-                      className="ml-2"
-                      onClick={() => handleDeleteUser(user.id)}
-                    >
-                      Delete
-                    </Button>
+                    <div className="flex items-center justify-end gap-2">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="text-blue-600 border-blue-600 hover:bg-blue-50 hover:text-blue-700 dark:text-blue-400 dark:border-blue-400 dark:hover:bg-blue-900/20"
+                        onClick={() => handleEditClick(user)}
+                      >
+                        Manage
+                      </Button>
+                      <Button
+                        variant="destructive"
+                        size="sm"
+                        onClick={() => handleDeleteUser(user.id)}
+                      >
+                        Delete
+                      </Button>
+                    </div>
                   </TableCell>
                 </TableRow>
               ))}

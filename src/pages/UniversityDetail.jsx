@@ -8,12 +8,6 @@ import { API_BASE_URL } from "../apiConfig";
 import { Toaster, toast } from "sonner";
 import { cn } from "@/lib/utils";
 
-const LoadingSpinner = () => (
-  <div className="flex justify-center items-center h-screen">
-    <div className="animate-spin rounded-full h-24 w-24 border-t-2 border-b-2 border-blue-500"></div>
-  </div>
-);
-
 const ErrorMessage = ({ message }) => (
   <div className="flex justify-center items-center min-h-[60vh]">
     <Card className="w-full max-w-md mx-auto bg-red-50 border-red-200 dark:bg-red-900/20 dark:border-red-800">
@@ -36,6 +30,7 @@ const ErrorMessage = ({ message }) => (
     </Card>
   </div>
 );
+import LoadingSpinner from "../components/LoadingSpinner";
 
 export default function UniversityDetail() {
   const { id } = useParams();
@@ -153,7 +148,7 @@ export default function UniversityDetail() {
     }
   };
 
-  if (loading) return <LoadingSpinner />;
+  if (loading) return <LoadingSpinner size="large" className="h-screen" />;
   if (error) return <ErrorMessage message={error} />;
   if (!university)
     return (

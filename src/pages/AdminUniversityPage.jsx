@@ -22,6 +22,7 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import LoadingSpinner from "../components/LoadingSpinner";
 
 const AdminUniversityPage = () => {
   const [universities, setUniversities] = useState([]);
@@ -166,7 +167,7 @@ const AdminUniversityPage = () => {
     setIsDialogOpen(true);
   };
 
-  if (loading) return <div>Loading...</div>;
+  if (loading) return <LoadingSpinner size="large" className="h-screen" />;
   if (error) return <div>Error: {error}</div>;
 
   return (
@@ -205,7 +206,7 @@ const AdminUniversityPage = () => {
               <TableRow>
                 <TableHead>Name</TableHead>
                 <TableHead>Country</TableHead>
-                <TableHead>Actions</TableHead>
+                <TableHead className="text-right">Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -214,22 +215,23 @@ const AdminUniversityPage = () => {
                   <TableCell>{uni.name}</TableCell>
                   <TableCell>{uni.country}</TableCell>
                   <TableCell>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="text-blue-600 border-blue-600 hover:bg-blue-50 hover:text-blue-700 dark:text-blue-400 dark:border-blue-400 dark:hover:bg-blue-900/20"
-                      onClick={() => openEditDialog(uni)}
-                    >
-                      Edit
-                    </Button>
-                    <Button
-                      variant="destructive"
-                      size="sm"
-                      className="ml-2"
-                      onClick={() => handleDelete(uni.id)}
-                    >
-                      Delete
-                    </Button>
+                    <div className="flex items-center justify-end gap-2">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="text-blue-600 border-blue-600 hover:bg-blue-50 hover:text-blue-700 dark:text-blue-400 dark:border-blue-400 dark:hover:bg-blue-900/20"
+                        onClick={() => openEditDialog(uni)}
+                      >
+                        Edit
+                      </Button>
+                      <Button
+                        variant="destructive"
+                        size="sm"
+                        onClick={() => handleDelete(uni.id)}
+                      >
+                        Delete
+                      </Button>
+                    </div>
                   </TableCell>
                 </TableRow>
               ))}

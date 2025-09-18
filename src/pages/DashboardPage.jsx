@@ -5,12 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { API_BASE_URL } from "../apiConfig";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-
-const LoadingSpinner = () => (
-  <div className="flex justify-center items-center h-64">
-    <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-blue-500"></div>
-  </div>
-);
+import LoadingSpinner from "../components/LoadingSpinner";
 
 const ErrorMessage = ({ message }) => (
   <div className="text-center text-red-500 italic mt-10">
