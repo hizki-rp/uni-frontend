@@ -9,6 +9,8 @@ import DashboardPage from "./pages/DashboardPage";
 import UniversityDetail from "./pages/UniversityDetail";
 import AdminUniversityPage from "./pages/AdminUniversityPage";
 import Navbar from "./Navbar";
+import HomePage from "./pages/HomePage";
+import ContactPage from "./pages/ContactPage";
 
 function App() {
   return (
@@ -30,7 +32,8 @@ function App() {
         {/* Public Routes */}
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
-        <Route path="/" element={<LoginPage />} /> {/* Default to login */}
+         <Route path="/contact" element={<ContactPage />} />
+        <Route path="/" element={<HomePage />} /> {/* Default to login */}
       </Routes>
     </AuthProvider>
   );
