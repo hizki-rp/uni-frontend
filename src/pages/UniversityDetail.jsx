@@ -14,6 +14,29 @@ const LoadingSpinner = () => (
   </div>
 );
 
+const ErrorMessage = ({ message }) => (
+  <div className="flex justify-center items-center min-h-[60vh]">
+    <Card className="w-full max-w-md mx-auto bg-red-50 border-red-200 dark:bg-red-900/20 dark:border-red-800">
+      <CardHeader>
+        <CardTitle className="text-red-700 dark:text-red-400 text-center">
+          Access Denied
+        </CardTitle>
+      </CardHeader>
+      <CardContent className="text-center">
+        <p className="text-red-600 dark:text-red-300 mb-4">{message}</p>
+        {/subscription/i.test(message) && (
+          <Button
+            asChild
+            className="bg-blue-600 text-white hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600"
+          >
+            <Link to="/dashboard">Go to Dashboard to Renew &rarr;</Link>
+          </Button>
+        )}
+      </CardContent>
+    </Card>
+  </div>
+);
+
 export default function UniversityDetail() {
   const { id } = useParams();
   const { authTokens, user, logoutUser } = useAuth();
@@ -57,7 +80,10 @@ export default function UniversityDetail() {
           return;
         }
         if (!uniResponse.ok) {
-          throw new Error("Failed to fetch university details.");
+          const errorData = await uniResponse.json();
+          throw new Error(
+            errorData.detail || "Failed to fetch university details."
+          );
         }
         const uniData = await uniResponse.json();
         setUniversity(uniData);
@@ -66,7 +92,7 @@ export default function UniversityDetail() {
         await fetchDashboardData();
       } catch (err) {
         console.error("Error fetching university:", err);
-        toast.error(err.message);
+        setError(err.message);
       } finally {
         setLoading(false);
       }
@@ -128,6 +154,7 @@ export default function UniversityDetail() {
   };
 
   if (loading) return <LoadingSpinner />;
+  if (error) return <ErrorMessage message={error} />;
   if (!university)
     return (
       <p className="text-center text-red-500 mt-10">University not found.</p>

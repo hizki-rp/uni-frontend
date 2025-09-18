@@ -35,8 +35,11 @@ const ErrorMessage = ({ message }) => (
     <CardContent className="text-center">
       <p className="text-red-600 mb-4">{message}</p>
       {/subscription/i.test(message) && (
-        <Button asChild>
-          <Link to="/dashboard">Go to Dashboard to Renew</Link>
+        <Button
+          asChild
+          className="bg-blue-600 text-white hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600"
+        >
+          <Link to="/dashboard">Go to Dashboard to Renew &rarr;</Link>
         </Button>
       )}
     </CardContent>

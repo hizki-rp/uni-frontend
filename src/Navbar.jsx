@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "./context/context";
 import { Button } from "./components/ui/button";
@@ -7,6 +7,7 @@ import { Menu } from "lucide-react";
 import Sidebar from "./components/Sidebar";
 
 export default function Navbar() {
+  const [isSheetOpen, setIsSheetOpen] = useState(false);
   const location = useLocation();
   const { user, logoutUser } = useAuth();
 
@@ -82,19 +83,17 @@ export default function Navbar() {
         {/* Auth Buttons & Mobile Menu */}
         <div className="flex items-center gap-4">
           <div className="md:hidden">
-            {user && (
-              <Sheet>
-                <SheetTrigger asChild>
-                  <Button variant="outline" size="icon" className="shrink-0">
-                    <Menu className="h-5 w-5" />
-                    <span className="sr-only">Toggle navigation menu</span>
-                  </Button>
-                </SheetTrigger>
-                <SheetContent side="right" className="p-0">
-                  <Sidebar />
-                </SheetContent>
-              </Sheet>
-            )}
+            <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
+              <SheetTrigger asChild>
+                <Button variant="outline" size="icon" className="shrink-0">
+                  <Menu className="h-5 w-5" />
+                  <span className="sr-only">Toggle navigation menu</span>
+                </Button>
+              </SheetTrigger>
+              <SheetContent side="right" className="p-0">
+                <Sidebar onLinkClick={() => setIsSheetOpen(false)} />
+              </SheetContent>
+            </Sheet>
           </div>
           {user ? (
             <Button
@@ -105,7 +104,7 @@ export default function Navbar() {
               Logout
             </Button>
           ) : (
-            <>
+            <div className="hidden md:flex items-center gap-4">
               {isHomePage ? (
                 <a
                   href="#contact"
@@ -134,7 +133,7 @@ export default function Navbar() {
               >
                 Sign Up
               </Link>
-            </>
+            </div>
           )}
         </div>
       </div>
