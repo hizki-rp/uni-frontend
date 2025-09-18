@@ -45,6 +45,9 @@ const UniversityList = () => {
   const [error, setError] = React.useState(null);
   const { authTokens, logoutUser } = useAuth();
   const navigate = useNavigate();
+  const [nextPageUrl, setNextPageUrl] = React.useState(null);
+  const [loadingMore, setLoadingMore] = React.useState(false);
+  const [totalCount, setTotalCount] = React.useState(0);
 
   const initialFilters = {
     country: "",
@@ -59,33 +62,86 @@ const UniversityList = () => {
   const [tempFilters, setTempFilters] = React.useState(initialFilters);
   const [isFilterModalOpen, setIsFilterModalOpen] = React.useState(false);
 
-  // Fetch universities
+  const handleLoadMore = React.useCallback(async () => {
+    if (!nextPageUrl || loadingMore) return;
+
+    setLoadingMore(true);
+    try {
+      const response = await fetch(nextPageUrl, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + String(authTokens.access),
+        },
+      });
+
+      if (response.status === 401) {
+        logoutUser();
+        return;
+      }
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(
+          errorData.detail || `Request failed with status ${response.status}`
+        );
+      }
+
+      const data = await response.json();
+      setUniversities((prev) => [...prev, ...(data.results || [])]);
+      setNextPageUrl(data.next);
+    } catch (err) {
+      console.error("Fetch error:", err.message);
+      setError(err.message); // Or a more specific error for loading more
+    } finally {
+      setLoadingMore(false);
+    }
+  }, [nextPageUrl, loadingMore, authTokens, logoutUser]);
+
+  // Fetch universities on initial load and when filters/query change
   React.useEffect(() => {
-    const fetchUniversities = async () => {
+    const params = new URLSearchParams();
+    if (query) params.append("search", query);
+    if (filters.country) params.append("country__icontains", filters.country);
+    if (filters.city) params.append("city__icontains", filters.city);
+    if (filters.course)
+      params.append("course_offered__icontains", filters.course);
+    if (filters.degree) params.append("degree_level", filters.degree);
+    if (filters.maxAppFee)
+      params.append("application_fee__lte", filters.maxAppFee);
+    if (filters.maxTuition)
+      params.append("tuition_fee__lte", filters.maxTuition);
+
+    const url = `${API_BASE_URL}/api/universities/?${params.toString()}`;
+
+    const doFetch = async () => {
+      setLoading(true);
+      setError(null);
       try {
-        const response = await fetch(`${API_BASE_URL}/api/universities/`, {
+        const response = await fetch(url, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
             Authorization: "Bearer " + String(authTokens.access),
           },
         });
+
         if (response.status === 401) {
-          // Unauthorized or token expired
           logoutUser();
           return;
         }
-        // This is the key change: handle non-200 responses.
+
         if (!response.ok) {
           const errorData = await response.json();
-          // The custom permission message is in `errorData.detail`
           throw new Error(
             errorData.detail || `Request failed with status ${response.status}`
           );
         }
+
         const data = await response.json();
-        // Handle both paginated and non-paginated API responses
-        setUniversities(data.results || data || []);
+        setUniversities(data.results || []);
+        setTotalCount(data.count || 0);
+        setNextPageUrl(data.next);
       } catch (err) {
         console.error("Fetch error:", err.message);
         setError(err.message);
@@ -93,48 +149,9 @@ const UniversityList = () => {
         setLoading(false);
       }
     };
-    fetchUniversities();
-  }, [authTokens, navigate, logoutUser]);
 
-  // --- 2. Memoized Filtering + Search Logic ---
-  const filteredUniversities = React.useMemo(
-    () =>
-      universities.filter((uni) => {
-        const search = query.toLowerCase();
-
-        // The main fix is adding optional chaining (?.) before calling .toLowerCase() or .includes().
-        // This was incorrect and would crash. The fix is to use `(uni.field ?? '')` to provide a
-        // fallback empty string for nullish values before calling string methods.
-        const matchesSearch =
-          !query ||
-          (uni.name ?? "").toLowerCase().includes(search) ||
-          (uni.country ?? "").toLowerCase().includes(search) ||
-          (uni.course_offered ?? "").toLowerCase().includes(search);
-
-        const matchesFilters =
-          (!filters.country ||
-            (uni.country ?? "").toLowerCase() ===
-              filters.country.toLowerCase()) &&
-          (!filters.city ||
-            (uni.city ?? "").toLowerCase() === filters.city.toLowerCase()) &&
-          (!filters.course ||
-            (uni.course_offered ?? "")
-              .toLowerCase()
-              .includes(filters.course.toLowerCase())) &&
-          (!filters.degree ||
-            (uni.degree_level ?? "").toLowerCase() ===
-              filters.degree.toLowerCase()) &&
-          // --- 3. Fixed Empty Field Filtering ---
-          // This logic now correctly ignores the filter if the input is empty by checking for the filter value first.
-          (!filters.maxAppFee ||
-            parseFloat(uni.application_fee) <= parseFloat(filters.maxAppFee)) &&
-          (!filters.maxTuition ||
-            parseFloat(uni.tuition_fee) <= parseFloat(filters.maxTuition));
-
-        return matchesSearch && matchesFilters;
-      }),
-    [universities, query, filters]
-  );
+    doFetch();
+  }, [query, filters, authTokens, logoutUser]);
 
   const handleApplyFilters = () => {
     setFilters(tempFilters);
@@ -144,6 +161,7 @@ const UniversityList = () => {
   const handleClearFilters = () => {
     setFilters(initialFilters);
     setTempFilters(initialFilters);
+    setQuery("");
   };
 
   const handleFilterModalOpenChange = (open) => {
@@ -246,7 +264,7 @@ const UniversityList = () => {
       <main className="container mx-auto p-4 md:p-8 font-sans">
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6 mb-12">
           <h2 className="text-3xl font-extrabold tracking-tight text-gray-900 dark:text-gray-50">
-            Explore Universities ({filteredUniversities.length})
+            Explore Universities ({totalCount})
           </h2>
           <div className="flex items-center gap-3 w-full md:w-auto">
             <Input
@@ -272,9 +290,9 @@ const UniversityList = () => {
           <LoadingSpinner />
         ) : error ? (
           <ErrorMessage message={error} />
-        ) : filteredUniversities.length > 0 ? (
+        ) : universities.length > 0 ? (
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-            {filteredUniversities.map((uni) => (
+            {universities.map((uni) => (
               <Link key={uni.id} to={`/university/${uni.id}`} className="block">
                 <Card className="h-full border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900/50 p-0 flex flex-col justify-between transition-all duration-300 hover:shadow-lg hover:-translate-y-1 hover:border-blue-500">
                   <CardHeader className="p-4">
@@ -355,6 +373,19 @@ const UniversityList = () => {
             </p>
           </div>
         )}
+        {universities.length > 0 &&
+          universities.length < totalCount &&
+          !loading && (
+            <div className="text-center mt-12">
+              <Button
+                onClick={handleLoadMore}
+                disabled={loadingMore}
+                className="bg-blue-600 text-white hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600"
+              >
+                {loadingMore ? "Loading..." : "Load More"}
+              </Button>
+            </div>
+          )}
       </main>
     </div>
   );
