@@ -68,3 +68,20 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* confetti animation */
+
+@keyframes subtle-glow {
+  0%, 100% {
+    box-shadow: 0 0 5px rgba(34, 197, 94, 0.3), 0 0 10px rgba(34, 197, 94, 0.2);
+    border-color: rgba(34, 197, 94, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 20px rgba(34, 197, 94, 0.6), 0 0 30px rgba(34, 197, 94, 0.4);
+    border-color: rgba(34, 197, 94, 0.8);
+  }
+}
+
+.glow-active {
+  animation: subtle-glow 3s ease-in-out infinite;
+}

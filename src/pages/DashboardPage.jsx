@@ -5,6 +5,8 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { API_BASE_URL } from "../apiConfig";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import ReactConfetti from "react-confetti";
+import { useWindowSize } from "react-use";
 import LoadingSpinner from "../components/LoadingSpinner";
 
 const ErrorMessage = ({ message }) => (
@@ -20,6 +22,8 @@ const DashboardPage = () => {
   const [error, setError] = useState(null);
   const [isRenewing, setIsRenewing] = useState(false);
   const [renewalError, setRenewalError] = useState(null);
+  const { width, height } = useWindowSize();
+  const [showConfetti, setShowConfetti] = useState(false);
   const { authTokens, logoutUser } = useAuth();
 
   const fetchDashboardData = useCallback(async () => {
@@ -78,6 +82,22 @@ const DashboardPage = () => {
     return () => clearInterval(poller);
   }, [dashboardData, error, fetchDashboardData]);
 
+  // Effect to trigger a one-time celebration animation for active users
+  useEffect(() => {
+    // Only run confetti once per session when data is loaded and status is active
+    if (
+      dashboardData?.subscription_status === "active" &&
+      !sessionStorage.getItem("confettiShownForSession")
+    ) {
+      setShowConfetti(true);
+      sessionStorage.setItem("confettiShownForSession", "true");
+      const timer = setTimeout(() => {
+        setShowConfetti(false);
+      }, 8000); // Let it rain for 8 seconds!
+      return () => clearTimeout(timer);
+    }
+  }, [dashboardData]);
+
   const renderUniversityList = (universities) => {
     if (!universities || universities.length === 0) {
       return (
@@ -118,6 +138,8 @@ const DashboardPage = () => {
     return <p className="text-center mt-10">No dashboard data found.</p>;
   }
 
+  const isSubscriptionActive = dashboardData.subscription_status === "active";
+
   const handleRenewSubscription = async () => {
     setIsRenewing(true);
     setRenewalError(null);
@@ -147,9 +169,19 @@ const DashboardPage = () => {
 
   return (
     <div className="container mx-auto p-4 md:p-8">
+      {isSubscriptionActive && showConfetti && (
+        <ReactConfetti
+          width={width}
+          height={height}
+          recycle={false}
+          numberOfPieces={500}
+          tweenDuration={7000}
+          className="!fixed"
+        />
+      )}
       <h1 className="text-3xl font-bold tracking-tight mb-8">My Dashboard</h1>
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-        <Card>
+        <Card className={isSubscriptionActive ? "glow-active" : ""}>
           <CardHeader>
             <CardTitle>Subscription Details</CardTitle>
           </CardHeader>
@@ -163,8 +195,8 @@ const DashboardPage = () => {
                     : "secondary"
                 }
                 className={`capitalize ${
-                  dashboardData.subscription_status === "active"
-                    ? "bg-green-600 text-white hover:bg-green-600"
+                  isSubscriptionActive
+                    ? "bg-green-600 text-white hover:bg-green-600 animate-pulse"
                     : ""
                 }`}
               >
