@@ -1,77 +1,64 @@
-import React from "react";
+import React from 'react';
+import { Link } from 'react-router-dom';
 
 const ContactPage = () => {
-  return (
-    <div className="bg-gray-100 min-h-screen">
-      {/* Navbar (You might want to reuse your existing Navbar component here) */}
-      <nav className="bg-blue-600 p-4">
-        <div className="container mx-auto flex items-center justify-between">
-          <a href="/" className="text-white text-2xl font-bold">
-            Uni-Finder
-          </a>
-          {/* Add navigation links here if needed */}
-        </div>
-      </nav>
+  const handleContactSubmit = (e) => {
+    e.preventDefault();
+    // In a real app, you'd send this data to your backend.
+    alert("Thank you for your message! We will get back to you soon.");
+    e.target.reset();
+  };
 
-      {/* Contact Form */}
-      <div className="container mx-auto py-12">
-        <div className="max-w-lg mx-auto bg-white rounded-lg shadow-md p-8">
-          <h2 className="text-2xl font-semibold text-gray-800 mb-6">
-            Contact Us
-          </h2>
-          <form>
-            <div className="mb-4">
-              <label
-                htmlFor="name"
-                className="block text-gray-700 text-sm font-bold mb-2"
-              >
-                Name:
-              </label>
-              <input
-                type="text"
-                id="name"
-                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-              />
+  return (
+    <div className="bg-gray-50">
+      <div className="container mx-auto px-6 py-20">
+        <div className="text-center mb-16">
+          <h1 className="text-4xl md:text-5xl font-extrabold text-gray-800 mb-4">Get in Touch</h1>
+          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+            We'd love to hear from you! Whether you have a question about features, trials, or anything else, our team is ready to answer all your questions.
+          </p>
+        </div>
+
+        <div className="max-w-4xl mx-auto bg-white p-8 md:p-12 rounded-lg shadow-lg">
+          <form onSubmit={handleContactSubmit}>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <label htmlFor="name" className="block text-gray-700 font-bold mb-2">Name</label>
+                <input type="text" id="name" name="name" required className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 transition" />
+              </div>
+              <div>
+                <label htmlFor="email" className="block text-gray-700 font-bold mb-2">Email</label>
+                <input type="email" id="email" name="email" required className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 transition" />
+              </div>
             </div>
-            <div className="mb-4">
-              <label
-                htmlFor="email"
-                className="block text-gray-700 text-sm font-bold mb-2"
-              >
-                Email:
-              </label>
-              <input
-                type="email"
-                id="email"
-                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-              />
+            <div className="mt-6">
+              <label htmlFor="subject" className="block text-gray-700 font-bold mb-2">Subject</label>
+              <input type="text" id="subject" name="subject" required className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 transition" />
             </div>
-            <div className="mb-6">
-              <label
-                htmlFor="message"
-                className="block text-gray-700 text-sm font-bold mb-2"
-              >
-                Message:
-              </label>
-              <textarea
-                id="message"
-                rows="4"
-                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-              ></textarea>
+            <div className="mt-6">
+              <label htmlFor="message" className="block text-gray-700 font-bold mb-2">Message</label>
+              <textarea id="message" name="message" rows="5" required className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 transition"></textarea>
             </div>
-            <div className="flex items-center justify-between">
-              <button
-                className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-                type="submit"
-              >
-                Send
+            <div className="text-center mt-8">
+              <button type="submit" className="bg-blue-600 text-white font-bold py-3 px-10 rounded-full hover:bg-blue-700 transition-colors text-lg">
+                Send Message
               </button>
             </div>
           </form>
         </div>
       </div>
 
-      {/* Footer (You might want to reuse the footer from HomePage) */}
+      {/* Footer */}
+      <footer className="bg-gray-800 text-gray-400 py-8">
+        <div className="container mx-auto px-6 text-center">
+          <p>&copy; {new Date().getFullYear()} UNI-FINDER. All Rights Reserved.</p>
+          <div className="mt-4">
+            <Link to="/privacy" className="hover:text-white mx-2">Privacy Policy</Link>
+            <span className="select-none">|</span>
+            <Link to="/terms" className="hover:text-white mx-2">Terms of Service</Link>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 };

@@ -1,5 +1,5 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link } from "react-router-dom"; // --- SVG Icons ---
 const SearchIcon = (props) => (
   <svg
     {...props}
@@ -61,6 +61,44 @@ const CheckCircleIcon = (props) => (
   </svg>
 );
 
+const DocumentTextIcon = (props) => (
+  <svg
+    {...props}
+    xmlns="http://www.w3.org/2000/svg"
+    width="24"
+    height="24"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z" />
+    <polyline points="14 2 14 8 20 8" />
+    <line x1="16" y1="13" x2="8" y2="13" />
+    <line x1="16" y1="17" x2="8" y2="17" />
+    <line x1="10" y1="9" x2="8" y2="9" />
+  </svg>
+);
+
+const PlaneIcon = (props) => (
+  <svg
+    {...props}
+    xmlns="http://www.w3.org/2000/svg"
+    width="24"
+    height="24"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 1 4 4-1h3l3-2 3.7 3.7c.4.4 1 .4 1.4 0l.4-.4c.4-.4.4-1 0-1.4Z" />
+  </svg>
+);
+
 const HomePage = () => {
   const handleContactSubmit = (e) => {
     e.preventDefault();
@@ -85,9 +123,9 @@ const HomePage = () => {
             Don't Just Apply. Strategize.
           </h1>
           <p className="text-lg md:text-xl max-w-3xl mx-auto mb-8">
-            Stop juggling spreadsheets and scattered notes. University Compass
-            is your all-in-one dashboard to discover, track, and conquer your
-            university applications.
+            Stop juggling spreadsheets and scattered notes. UNI-FINDER is your
+            all-in-one dashboard to discover, track, and conquer your university
+            applications.
           </p>
           <Link
             to="/register"
@@ -106,7 +144,7 @@ const HomePage = () => {
           </h2>
           <p className="text-gray-600 max-w-2xl mx-auto mb-12">
             You're missing out on the most organized way to manage your future.
-            Here's what you get with University Compass:
+            Here's what you get with UNI-FINDER:
           </p>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
             <div className="feature-card">
@@ -145,6 +183,104 @@ const HomePage = () => {
         </div>
       </section>
 
+      {/* Preparation Section */}
+      <section id="preparation" className="py-20">
+        <div className="container mx-auto px-6">
+          <div className="text-center">
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">
+              Prepare for Success
+            </h2>
+            <p className="text-gray-600 max-w-3xl mx-auto mb-12">
+              The journey to studying abroad involves careful preparation.
+              UNI-FINDER helps you stay on top of everything.
+            </p>
+          </div>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
+            {/* Admission Documents */}
+            <div className="bg-gray-50 p-8 rounded-lg shadow-sm">
+              <div className="flex items-center mb-4">
+                <div className="bg-blue-100 text-blue-600 rounded-full p-3 inline-block">
+                  <DocumentTextIcon className="h-6 w-6" />
+                </div>
+                <h3 className="text-2xl font-bold ml-4">Admission Documents</h3>
+              </div>
+              <p className="text-gray-600 mb-6">
+                Most universities require these key documents. Start gathering
+                them early!
+              </p>
+              <ul className="space-y-3 text-gray-700">
+                <li className="flex items-center">
+                  <CheckCircleIcon className="h-5 w-5 text-green-500 mr-3 flex-shrink-0" />
+                  Valid Passport
+                </li>
+                <li className="flex items-center">
+                  <CheckCircleIcon className="h-5 w-5 text-green-500 mr-3 flex-shrink-0" />
+                  Academic Transcripts & Certificates
+                </li>
+                <li className="flex items-center">
+                  <CheckCircleIcon className="h-5 w-5 text-green-500 mr-3 flex-shrink-0" />
+                  Standardized Test Scores (SAT, GRE, etc.)
+                </li>
+                <li className="flex items-center">
+                  <CheckCircleIcon className="h-5 w-5 text-green-500 mr-3 flex-shrink-0" />
+                  Language Proficiency (TOEFL, IELTS)
+                </li>
+                <li className="flex items-center">
+                  <CheckCircleIcon className="h-5 w-5 text-green-500 mr-3 flex-shrink-0" />
+                  Letters of Recommendation
+                </li>
+                <li className="flex items-center">
+                  <CheckCircleIcon className="h-5 w-5 text-green-500 mr-3 flex-shrink-0" />
+                  Statement of Purpose or Essay
+                </li>
+              </ul>
+            </div>
+
+            {/* Visa Requirements */}
+            <div className="bg-gray-50 p-8 rounded-lg shadow-sm">
+              <div className="flex items-center mb-4">
+                <div className="bg-green-100 text-green-600 rounded-full p-3 inline-block">
+                  <PlaneIcon className="h-6 w-6" />
+                </div>
+                <h3 className="text-2xl font-bold ml-4">
+                  Visa Application Essentials
+                </h3>
+              </div>
+              <p className="text-gray-600 mb-6">
+                Be prepared for your student visa interview with these common
+                requirements.
+              </p>
+              <ul className="space-y-3 text-gray-700">
+                <li className="flex items-center">
+                  <CheckCircleIcon className="h-5 w-5 text-green-500 mr-3 flex-shrink-0" />
+                  Official University Acceptance Letter
+                </li>
+                <li className="flex items-center">
+                  <CheckCircleIcon className="h-5 w-5 text-green-500 mr-3 flex-shrink-0" />
+                  Proof of Financial Support
+                </li>
+                <li className="flex items-center">
+                  <CheckCircleIcon className="h-5 w-5 text-green-500 mr-3 flex-shrink-0" />
+                  Valid Passport with at least 6 months validity
+                </li>
+                <li className="flex items-center">
+                  <CheckCircleIcon className="h-5 w-5 text-green-500 mr-3 flex-shrink-0" />
+                  Completed Visa Application Forms
+                </li>
+                <li className="flex items-center">
+                  <CheckCircleIcon className="h-5 w-5 text-green-500 mr-3 flex-shrink-0" />
+                  Passport-sized Photographs
+                </li>
+                <li className="flex items-center">
+                  <CheckCircleIcon className="h-5 w-5 text-green-500 mr-3 flex-shrink-0" />
+                  Proof of Accommodation & Travel Insurance
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Testimonials Section */}
       <section className="py-20">
         <div className="container mx-auto px-6 text-center">
@@ -154,9 +290,9 @@ const HomePage = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
             <div className="bg-gray-50 p-8 rounded-lg shadow-sm">
               <p className="text-gray-600 italic mb-4">
-                "University Compass took the chaos out of my application
-                process. I felt so much more in control and confident. I can't
-                imagine doing it any other way now."
+                "UNI-FINDER took the chaos out of my application process. I felt
+                so much more in control and confident. I can't imagine doing it
+                any other way now."
               </p>
               <p className="font-bold">- Alex P., Admitted to UCLA</p>
             </div>
@@ -271,8 +407,7 @@ const HomePage = () => {
       <footer className="bg-gray-800 text-gray-400 py-8">
         <div className="container mx-auto px-6 text-center">
           <p>
-            &copy; {new Date().getFullYear()} University Compass. All Rights
-            Reserved.
+            &copy; {new Date().getFullYear()} UNI-FINDER. All Rights Reserved.
           </p>
           <div className="mt-4">
             <Link to="/privacy" className="hover:text-white mx-2">
