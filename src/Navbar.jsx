@@ -11,6 +11,12 @@ export default function Navbar() {
   const { user, logoutUser } = useAuth();
 
   const isActive = (path) => location.pathname === path;
+  const isHomePage = location.pathname === "/";
+
+  const handleScrollToContact = (e) => {
+    e.preventDefault();
+    document.getElementById("contact")?.scrollIntoView({ behavior: "smooth" });
+  };
 
   return (
     <nav className="bg-white/80 dark:bg-gray-950/80 backdrop-blur-md shadow-sm dark:shadow-black/20 py-4 md:py-5 sticky top-0 z-50 font-sans border-b border-gray-200 dark:border-gray-800">
@@ -100,6 +106,22 @@ export default function Navbar() {
             </Button>
           ) : (
             <>
+              {isHomePage ? (
+                <a
+                  href="#contact"
+                  onClick={handleScrollToContact}
+                  className="px-4 py-2 rounded-full text-blue-600 dark:text-blue-400 border-2 border-blue-600 dark:border-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900 transition-colors duration-200 font-medium"
+                >
+                  Contact
+                </a>
+              ) : (
+                <Link
+                  to="/contact"
+                  className="px-4 py-2 rounded-full text-blue-600 dark:text-blue-400 border-2 border-blue-600 dark:border-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900 transition-colors duration-200 font-medium"
+                >
+                  Contact
+                </Link>
+              )}
               <Link
                 to="/login"
                 className="px-4 py-2 rounded-full text-blue-600 dark:text-blue-400 border-2 border-blue-600 dark:border-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900 transition-colors duration-200 font-medium"

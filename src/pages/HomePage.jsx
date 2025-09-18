@@ -1,5 +1,6 @@
 import React from "react";
-import { Link } from "react-router-dom"; // --- SVG Icons ---
+import { Link } from "react-router-dom";
+import { Toaster, toast } from "sonner"; // --- SVG Icons ---
 const SearchIcon = (props) => (
   <svg
     {...props}
@@ -103,12 +104,13 @@ const HomePage = () => {
   const handleContactSubmit = (e) => {
     e.preventDefault();
     // In a real app, you'd send this data to your backend.
-    alert("Thank you for your message! We will get back to you soon.");
+    toast.success("Thank you for your message! We will get back to you soon.");
     e.target.reset();
   };
 
   return (
     <div className="bg-white text-gray-800 font-sans">
+      <Toaster richColors />
       {/* Hero Section */}
       <section className="relative bg-blue-600 text-white py-20 md:py-32">
         <div
