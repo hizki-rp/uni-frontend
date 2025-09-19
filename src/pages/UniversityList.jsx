@@ -263,8 +263,8 @@ const UniversityList = () => {
     <div className="min-h-screen bg-gray-50 dark:bg-gray-950 py-6">
       <main className="container mx-auto p-4 md:p-8 font-sans">
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6 mb-12">
-          <h2 className="text-3xl font-extrabold tracking-tight text-gray-900 dark:text-gray-50">
-            Explore Universities ({totalCount})
+          <h2 className="text-2xl font-extrabold tracking-tight text-gray-900 dark:text-gray-50">
+            Explore Universities {/*  ({totalCount*})  */}  
           </h2>
           <div className="flex items-center gap-3 w-full md:w-auto">
             <Input

@@ -109,27 +109,27 @@ export default function Navbar() {
                 <a
                   href="#contact"
                   onClick={handleScrollToContact}
-                  className="px-4 py-2 rounded-full text-blue-600 dark:text-blue-400 border-2 border-blue-600 dark:border-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900 transition-colors duration-200 font-medium"
+                  className="px-4 py-[5px] rounded-full text-blue-600 dark:text-blue-400 border-2 border-blue-600 dark:border-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900 transition-colors duration-200 font-medium"
                 >
                   Contact
                 </a>
               ) : (
                 <Link
                   to="/contact"
-                  className="px-4 py-2 rounded-full text-blue-600 dark:text-blue-400 border-2 border-blue-600 dark:border-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900 transition-colors duration-200 font-medium"
+                  className="px-4 py-[5px] rounded-full text-blue-600 dark:text-blue-400 border-2 border-blue-600 dark:border-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900 transition-colors duration-200 font-medium"
                 >
                   Contact
                 </Link>
               )}
               <Link
                 to="/login"
-                className="px-4 py-2 rounded-full text-blue-600 dark:text-blue-400 border-2 border-blue-600 dark:border-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900 transition-colors duration-200 font-medium"
+                className="px-4 py-[5px] rounded-full text-blue-600 dark:text-blue-400 border-2 border-blue-600 dark:border-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900 transition-colors duration-200 font-medium"
               >
                 Login
               </Link>
               <Link
                 to="/register"
-                className="px-4 py-2 rounded-full bg-blue-600 dark:bg-blue-500 text-white hover:bg-blue-700 dark:hover:bg-blue-600 transition-colors duration-200 font-semibold shadow-md"
+                className="px-4 py-[6px] rounded-full bg-blue-600 dark:bg-blue-500 text-white hover:bg-blue-700 dark:hover:bg-blue-600 transition-colors duration-200 font-semibold shadow-md"
               >
                 Sign Up
               </Link>
